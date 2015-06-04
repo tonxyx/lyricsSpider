@@ -10,6 +10,66 @@ require_once './error.php';
 
 use Goutte\Client;
 
+class Sleep
+{
+  private $count = 0;
+  private $tc;
+
+  public static function getInstance()
+  {
+    static $instance = null;
+    if (null === $instance) {
+      $instance = new static();
+    }
+
+    return $instance;
+  }
+
+  protected function __construct()
+  {
+    $this->tc = new TorControl\TorControl(
+      array(
+        'server' => '127.0.0.1',
+        'port'   => 9051,
+        'password' => 'test',
+        'authmethod' => 1
+      )
+    );
+  }
+
+  private function __clone()
+  {
+  }
+
+  private function __wakeup()
+  {
+  }
+
+  public function sleep(){
+
+    sleep(1);
+    $this->count++;
+    if($this->count > 20) {
+
+      $this->tc->connect();
+
+      $this->tc->authenticate();
+
+// Renew identity
+      $res = $this->tc->executeCommand('SIGNAL NEWNYM');
+
+// Echo the server reply code and message
+      echo $res[0]['code'].': '.$res[0]['message'];
+
+// Quit
+      $this->tc->quit();
+      echo "new tor identity";
+      sleep(10);
+    }
+  }
+
+}
+
 $poor_bastard = "http://www.azlyrics.com/";
 
 $client = new Client();
@@ -46,6 +106,8 @@ $crawler->filterXPath('//*[@id="artists-collapse"]/li/div/a')->each(function ($n
       $artistDetails,
       $lyricsTxt
     ) {
+      Sleep::getInstance()->sleep();
+
       $songTitle = $node->text();
 
       $song = $client->click($node->link());
@@ -68,5 +130,3 @@ $crawler->filterXPath('//*[@id="artists-collapse"]/li/div/a')->each(function ($n
 });
 
 fclose($lyricsTxt);
-
-

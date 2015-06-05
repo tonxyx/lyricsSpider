@@ -6,7 +6,6 @@ error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
 require_once './vendor/autoload.php';
-require_once './error.php';
 
 use Goutte\Client;
 
@@ -77,20 +76,21 @@ $client = new Client();
 $client->setHeader('User-Agent', "Googlebot");
 
 //$guzzle = $client->getClient();
+
 //$guzzle->setDefaultOption('proxy', 'socks5://127.0.0.1:9050');
 //$client->setClient($guzzle);
 
 $crawler = $client->request('GET', $poor_bastard);
 
-$lyricsTxt = fopen("lyrics.txt", "w");
+$lyricsTxt = fopen("songLyrics.txt", "w");
 
 $status_code = $client->getResponse()->getStatus();
 echo $status_code . "\n";
 
 $crawler->filterXPath('//*[@id="artists-collapse"]/li/div/a')->each(function ($node) use ($client, $lyricsTxt) {
-
+  Sleep::getInstance()->sleep();
   $page = $client->click($node->link());
-  
+
   $page->filterXPath('//html/body/div[2]/div/div/a')->each(function ($node) use ($client, $lyricsTxt) {
 
     $artist = $client->click($node->link());
@@ -109,15 +109,9 @@ $crawler->filterXPath('//*[@id="artists-collapse"]/li/div/a')->each(function ($n
 
       $text = $song->filterXPath('//html/body/div[3]/div/div[2]/div[6]')->text();
 
-      $data = json_encode(array(
-        "artist" => $artistDetails,
-        "title" => $songTitle,
-        "lyrics" => $text
-       ));
+      fwrite($lyricsTxt, $text);
+      Sleep::getInstance()->sleep();
 
-       fwrite($lyricsTxt, $data);
-       sleep(4);
-       echo("\n\n" . $data);
     });
 
   });

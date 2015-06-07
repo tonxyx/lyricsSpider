@@ -23,8 +23,8 @@ tokens = tokenizer.tokenize(raw);
 fdist1 = nltk.FreqDist(tokens);
 words = fdist1.most_common(100);
 
-file = open('data.tsv','w')
-file.write("word\tquantity")
+file = open('mostUsed/data.tsv','w')
+file.write("word\tfrequency\tquantity")
 
 mostUsedWord = words[0][1]
 
@@ -33,6 +33,8 @@ for (word, freq) in words:
     file.write(word)
     file.write("\t")
     file.write(str(freq/float(mostUsedWord)))
+    file.write("\t")
+    file.write(str(freq))
 
 file.close()
 

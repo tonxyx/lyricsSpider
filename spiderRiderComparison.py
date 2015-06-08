@@ -29,7 +29,7 @@ def getMostUsed (artistName, artistFile):
     for (word, freq) in words:
         word_array.append({'name' : word, 'size' : freq})
 
-    return {'name' : artistName, 'children' : word_array}
+    return {'name' : artistName, 'size' : len(set(tokens)), 'children' : word_array}
 
 comparisonArray = {
     'name' : 'Artists',

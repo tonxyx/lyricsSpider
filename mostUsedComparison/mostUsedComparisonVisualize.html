@@ -46,7 +46,7 @@
             .value(function(d) { return d.size; })
 
     var svg = d3.select("body").append("svg")
-            .attr("width", diameter)
+            .attr("width", '100%')
             .attr("height", diameter)
             .append("g")
             .attr("transform", "translate(" + diameter / 2 + "," + diameter / 2 + ")");
@@ -71,7 +71,7 @@
                 .attr("class", "label")
                 .style("fill-opacity", function(d) { return d.parent === root ? 1 : 0; })
                 .style("display", function(d) { return d.parent === root ? null : "none"; })
-                .text(function(d) { return d.name; });
+                .text(function(d) { return d.name+' ('+d.size+')'; });
 
         var node = svg.selectAll("circle,text");
 

@@ -63,7 +63,7 @@ class Sleep
             // Quit
             $this->tc->quit();
             echo "new tor identity\n";
-            sleep(10);
+            sleep(5);
         }
     }
 
@@ -94,8 +94,9 @@ $crawler->filterXPath('//*[@id="artists-collapse"]/li/div/a')->each(function ($n
 
         $page->filterXPath('//html/body/div[2]/div/div/a')->each(function ($node) use ($client, $lyricsTxt) {
 
-//            if (in_array($node->text(), array('BOB MARLEY','EMINEM','METALLICA','QUEEN','RIHANNA'))) {
-            if (in_array($node->text(), array('BOB MARLEY'))) {
+	    // use each array value as standalone because performacnce
+            //if (in_array($node->text(), array('BOB MARLEY','EMINEM','METALLICA','QUEEN','RIHANNA'))) {
+            if ($node->text() == 'RIHANNA') {
                 $artist = $client->click($node->link());
                 $artistDetails = $node->text();
 

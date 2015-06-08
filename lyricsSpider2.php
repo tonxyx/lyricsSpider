@@ -84,8 +84,6 @@ $crawler = $client->request('GET', $poor_bastard);
 
 $lyricsTxt = fopen("songLyrics2.txt", "w");
 
-$lyrics = array();
-
 $status_code = $client->getResponse()->getStatus();
 echo $status_code . "\n";
 
@@ -96,15 +94,21 @@ $crawler->filterXPath('//*[@id="artists-collapse"]/li/div/a')->each(function ($n
 
         $page->filterXPath('//html/body/div[2]/div/div/a')->each(function ($node) use ($client, $lyricsTxt) {
 
-            if (in_array($node->text(), array('BOB MARLEY','EMINEM','METALLICA','QUEEN','RIHANNA'))) {
+//            if (in_array($node->text(), array('BOB MARLEY','EMINEM','METALLICA','QUEEN','RIHANNA'))) {
+            if (in_array($node->text(), array('BOB MARLEY'))) {
                 $artist = $client->click($node->link());
                 $artistDetails = $node->text();
 
-                $artist->filterXPath('//*[@id="listAlbum"]/a[@target="_blank"]')->each(function ($node) use (
+              $artistLyricsTxt = fopen(strtolower(str_replace(' ', '_', $artistDetails)).".txt", "w");
+
+              $artist->filterXPath('//*[@id="listAlbum"]/a[@target="_blank"]')->each(function
+                ($node) use (
                     $client,
                     $artistDetails,
-                    $lyricsTxt
+                    $lyricsTxt,
+                    $artistLyricsTxt
                 ) {
+
                     Sleep::getInstance()->sleep();
 
                     $songTitle = $node->text();
@@ -113,22 +117,19 @@ $crawler->filterXPath('//*[@id="artists-collapse"]/li/div/a')->each(function ($n
 
                     $text = $song->filterXPath('//html/body/div[3]/div/div[2]/div[6]')->text();
 
-                    $lyrics [$artistDetails][] = $text;
+                    fwrite($artistLyricsTxt, $text);
                     fwrite($lyricsTxt, $text);
+
                     Sleep::getInstance()->sleep();
 
                 });
+
+              fclose($artistLyricsTxt);
             }
 
         });
     }
 
 });
-
-foreach ($lyrics as $artist => $artistLyrics) {
-    $artistLyricsTxt = fopen(strtolower(str_replace(' ', '_', $artist)).".txt", "w");
-    fwrite($artistLyricsTxt, implode("\n", $artistLyrics));
-    fclose($artistLyricsTxt);
-}
 
 fclose($lyricsTxt);

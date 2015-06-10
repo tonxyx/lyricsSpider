@@ -1,4 +1,4 @@
-import networkx as nx, sys
+import networkx as nx, sys, json
 from nltk.tokenize import RegexpTokenizer
 
 f=open('../rihanna.txt','rU')
@@ -20,22 +20,65 @@ for sentence in sentences:
             G.add_edge(lastWord, token)
         lastWord = token
 
-print "\nin degree"
-print G.in_degree()
+data = {}
+data['Rihanna'] = {}
 
-print "\nout degree"
-print G.out_degree()
+print "\nin degree generated"
+inDegree = G.in_degree()
+sum = 0
+count = 0
+for degree, percent in inDegree.items():
+    sum += percent
+    count += 1
 
-print "\nsum of degree"
+data['Rihanna']['inDegreeAvg'] = sum/count
+
+print "\nout degree generated"
+outDegree = G.out_degree()
+sum = 0
+count = 0
+for degree, percent in outDegree.items():
+    sum += percent
+    count += 1
+
+data['Rihanna']['outDegreeAvg'] = sum/count
+
+print "\navg of degree generated"
 degrees = G.degree()
-sum_of_edges = sum(degrees.values())
-print sum_of_edges
+sum = 0
+count = 0
+for degree, percent in degrees.items():
+    sum += percent
+    count += 1
 
-print "\navg degree connectivity"
-print nx.assortativity.connectivity.average_degree_connectivity(G)
+data['Rihanna']['degreeAvg'] = sum/count
 
-print "\navg neighbor degree"
-print nx.assortativity.average_neighbor_degree(G)
+print "\navg degree connectivity generated"
+avgDegreeConn = nx.assortativity.connectivity.average_degree_connectivity(G)
+sum = 0
+count = 0
+for degree, percent in avgDegreeConn.items():
+    sum += percent
+    count += 1
 
-print "\navg shortest path length"
-print nx.average_shortest_path_length(G)
+data['Rihanna']['avgDegreeConn'] = sum/count
+
+print "\navg neighbor degree generated"
+avgNeighborDeg = nx.assortativity.average_neighbor_degree(G)
+sum = 0
+count = 0
+for degree, percent in avgNeighborDeg.items():
+    sum += percent
+    count += 1
+
+data['Rihanna']['avgNeighborDeg'] = sum/count
+
+print "\navg shortest path length generated"
+data['Rihanna']['avgShortPathLen'] = nx.average_shortest_path_length(G)
+
+f = open('xGraphData.json', 'a')
+f.write(', ')
+json.dump(data, f)
+f.close()
+
+print data
